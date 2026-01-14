@@ -3,509 +3,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Kalkulator Tarif Freelance dengan fitur Export PDF dan Multi-Currency. Hitung rate ideal Anda sekarang.">
-    <meta name="keywords" content="kalkulator freelance, hourly rate calculator, dark mode, export pdf, tools bisnis">
+    
+    <!-- SEO META TAGS (Default: Indonesia) -->
+    <title>Kalkulator Tarif Freelance: Hitung Rate Per Jam (Update 2026)</title>
+    <meta name="description" content="Hitung tarif per jam ideal freelance Anda secara akurat. Tools gratis dengan fitur Export PDF, Multi-Currency, dan Bilingual. Berdasarkan rumus pricing standar industri.">
+    <meta name="keywords" content="kalkulator freelance, hitung tarif per jam, freelance rate calculator, cara menentukan harga jasa, tools freelance indonesia">
     <meta name="author" content="RateKu">
     <meta name="robots" content="index, follow">
-    
-    <meta property="og:title" content="Kalkulator Tarif Freelance Pro 2.0">
-    <meta property="og:description" content="Hitung tarif per jam, dukung USD/EUR/IDR, Mode Gelap, dan Export PDF.">
+    <link rel="canonical" href="https://yourusername.github.io/freelance-rate-calculator/" />
+
+    <!-- OPEN GRAPH / SOCIAL -->
     <meta property="og:type" content="website">
+    <meta property="og:title" content="Kalkulator Tarif Freelance Profesional">
+    <meta property="og:description" content="Jangan asal tebak harga. Gunakan kalkulator ini untuk menentukan tarif yang adil dan menguntungkan.">
+    <meta property="og:image" content="https://yourusername.github.io/freelance-rate-calculator/og-image.jpg">
 
-    <title>Kalkulator Tarif Freelance Pro | Tools Gratis</title>
-
-    <!-- Load html2pdf Library (Deferred for Performance) -->
+    <!-- LIBRARY: html2pdf (Deferred Load) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 
     <style>
-        /* --- CSS VARIABLES (THEME SYSTEM) --- */
+        /* --- CORE VARIABLES --- */
         :root {
-            /* Light Mode Default */
-            --primary: #4F46E5;
+            --primary: #4F46E5; /* Indigo 600 */
             --primary-hover: #4338CA;
-            --surface: #ffffff;
-            --background: #F3F4F6;
-            --text-main: #111827;
-            --text-muted: #6B7280;
+            --bg-body: #F9FAFB;
+            --bg-card: #FFFFFF;
+            --text-head: #111827;
+            --text-body: #4B5563;
             --border: #E5E7EB;
-            --input-bg: #ffffff;
-            --result-bg: #EEF2FF;
-            --result-border: #C7D2FE;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --radius: 16px;
         }
 
-        /* Dark Mode Overrides */
         html.dark {
-            --primary: #6366F1; /* Lighter Indigo for Dark Mode */
-            --primary-hover: #818CF8;
-            --surface: #1F2937; /* Gray 800 */
-            --background: #111827; /* Gray 900 */
-            --text-main: #F9FAFB;
-            --text-muted: #9CA3AF;
+            --primary: #818CF8;
+            --primary-hover: #6366F1;
+            --bg-body: #111827; /* Gray 900 */
+            --bg-card: #1F2937; /* Gray 800 */
+            --text-head: #F9FAFB;
+            --text-body: #9CA3AF;
             --border: #374151;
-            --input-bg: #111827;
-            --result-bg: #312E81; /* Dark Indigo */
-            --result-border: #4338CA;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        /* --- BASE STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--background);
-            color: var(--text-main);
+            background-color: var(--bg-body);
+            color: var(--text-body);
             line-height: 1.6;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
 
-        /* --- HEADER & CONTROLS --- */
-        .top-bar {
+        /* --- NAV & HEADER --- */
+        nav {
+            padding: 20px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
-            padding-top: 20px;
         }
 
-        .brand h1 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--text-main);
-        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--text-head); letter-spacing: -0.05em; }
+        .logo span { color: var(--primary); }
 
-        .controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
+        .controls { display: flex; gap: 10px; align-items: center; }
 
-        /* Toggle & Select Styles */
-        select {
+        select, button {
             padding: 8px 12px;
             border-radius: 8px;
             border: 1px solid var(--border);
-            background-color: var(--surface);
-            color: var(--text-main);
-            font-size: 0.9rem;
+            background: var(--bg-card);
+            color: var(--text-head);
+            font-size: 0.85rem;
             cursor: pointer;
-            outline: none;
-        }
-
-        .btn-icon {
-            background: none;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
-            cursor: pointer;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: 500;
         }
         
-        .btn-icon:hover { background-color: var(--border); }
+        button:hover, select:hover { border-color: var(--primary); }
 
-        /* --- MAIN CALCULATOR --- */
+        .lang-switch {
+            display: flex;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-card);
+        }
+        
+        .lang-btn {
+            border: none;
+            border-radius: 0;
+            padding: 8px 12px;
+            background: transparent;
+            opacity: 0.6;
+        }
+        
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            opacity: 1;
+            font-weight: 700;
+        }
+
+        /* --- CALCULATOR CARD --- */
         .calculator-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            background: var(--surface);
-            padding: 30px;
-            border-radius: 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            overflow: hidden;
+            margin-bottom: 60px;
         }
+
+        .form-area { padding: 30px; }
+        .result-area { 
+            background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+            color: white; 
+            padding: 30px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+        }
+
+        html.dark .result-area { background: linear-gradient(135deg, #312E81 0%, #3730A3 100%); }
 
         .input-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-head); }
         
-        label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-main);
-        }
-
-        .input-wrapper {
-            position: relative;
+        .input-box {
             display: flex;
             align-items: center;
-        }
-
-        .currency-symbol {
-            position: absolute;
-            left: 12px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        input[type="number"] {
-            width: 100%;
-            padding: 12px 12px 12px 45px;
-            font-size: 1rem;
             border: 1px solid var(--border);
             border-radius: 8px;
-            background-color: var(--input-bg);
-            color: var(--text-main);
-            outline: none;
+            background: var(--bg-body);
+            overflow: hidden;
         }
+        .input-box span { padding: 10px 15px; color: var(--text-body); font-weight: 600; background: rgba(0,0,0,0.03); }
+        .input-box input { width: 100%; padding: 10px; border: none; background: transparent; color: var(--text-head); font-size: 1rem; outline: none; }
 
-        input[type="number"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-        }
+        input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary); margin-top: 10px; }
 
-        /* Sliders */
-        input[type="range"] {
-            width: 100%;
-            cursor: pointer;
-            accent-color: var(--primary);
-            background: transparent;
-        }
-
-        /* Result Section */
-        .result-section {
-            background-color: var(--result-bg);
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            border: 1px solid var(--result-border);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .result-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .result-value {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 5px;
-            line-height: 1.2;
-        }
-
-        .result-divider {
-            height: 1px;
-            background-color: var(--border);
-            margin: 20px 0;
-            opacity: 0.5;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .stat-label { color: var(--text-muted); }
-        .stat-value { font-weight: 600; color: var(--text-main); }
+        /* RESULT TYPOGRAPHY */
+        .res-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 5px; }
+        .res-value { font-size: 3rem; font-weight: 800; line-height: 1; margin-bottom: 5px; }
+        .res-desc { font-size: 0.9rem; opacity: 0.9; margin-bottom: 25px; }
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px; margin-bottom: 25px; }
+        .stat-item div:first-child { font-size: 0.75rem; opacity: 0.8; }
+        .stat-item div:last-child { font-size: 1.1rem; font-weight: 700; }
 
         .btn-pdf {
-            margin-top: 20px;
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            width: 100%; padding: 12px; background: white; color: var(--primary); border: none; border-radius: 8px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer;
         }
+        .btn-pdf:hover { background: #f0f0f0; }
+
+        /* --- CONTENT SECTION --- */
+        .content-area { max-width: 700px; margin: 0 auto 60px; }
+        .content-area h2 { margin-top: 2rem; margin-bottom: 1rem; color: var(--text-head); }
+        .content-area p, .content-area li { margin-bottom: 1rem; color: var(--text-body); }
         
-        .btn-pdf:hover { background-color: var(--primary-hover); }
+        footer { text-align: center; padding: 40px; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-body); }
 
-        /* Content */
-        .content-section {
-            max-width: 700px;
-            margin: 60px auto;
-        }
-        .content-section h2 { margin-bottom: 1rem; color: var(--text-main); }
-        .content-section p, .content-section li { color: var(--text-muted); margin-bottom: 1rem; }
-
-        footer {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 40px 0;
-            font-size: 0.875rem;
-            border-top: 1px solid var(--border);
-            margin-top: 40px;
-        }
-
-        /* SVG Icons */
-        svg { width: 20px; height: 20px; fill: currentColor; }
-
-        /* Responsive */
+        /* RESPONSIVE */
         @media (max-width: 768px) {
             .calculator-wrapper { grid-template-columns: 1fr; }
-            .result-value { font-size: 2.5rem; }
+            .logo { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="container" id="app-container">
-    
-    <!-- Top Bar -->
-    <header class="top-bar">
-        <div class="brand">
-            <h1>RateKu<span style="color:var(--primary)">.</span></h1>
-        </div>
+<div class="container">
+    <nav>
+        <div class="logo">RateKu<span>.</span></div>
         <div class="controls">
-            <!-- Currency Select -->
+            <!-- Language Toggle -->
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="setLang('id')" id="btn-id">ID</button>
+                <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+            </div>
+
             <select id="currency-select" aria-label="Pilih Mata Uang">
                 <option value="IDR">IDR (Rp)</option>
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
             </select>
-
-            <!-- Dark Mode Toggle -->
-            <button id="theme-toggle" class="btn-icon" aria-label="Toggle Dark Mode">
-                <!-- Sun Icon -->
-                <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none;"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z"></path></svg>
-                <!-- Moon Icon -->
-                <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22.0045 12.267 22.0045 12.6368 21.9995 13.0066C21.6554 18.1522 17.382 22 12.24 22C6.71715 22 2.24 17.5228 2.24 12C2.24 6.85796 6.08781 2.58459 11.2334 2.24053C11.6032 2.23549 11.973 2.23549 12.3405 2.24053C11.0442 3.51105 10.24 5.28164 10 7ZM12.24 20C16.2753 20 19.6174 17.0264 20.3776 13.1417C19.3374 13.6934 18.1884 14 17 14C12.0294 14 8 9.97056 8 5C8 3.81163 8.30656 2.66263 8.85834 1.62237C4.97357 2.3826 2 5.72473 2 10C2 15.5228 6.47715 20 12 20H12.24Z"></path></svg>
-            </button>
+            
+            <button id="theme-toggle" aria-label="Mode Gelap">🌓</button>
         </div>
+    </nav>
+
+    <header style="text-align: center; margin-bottom: 40px;">
+        <h1 data-i18n="main_title" style="font-size: 2.2rem; margin-bottom: 15px;">Kalkulator Tarif Freelance</h1>
+        <p data-i18n="main_desc" style="max-width: 600px; margin: 0 auto; color: var(--text-body);">
+            Hitung tarif per jam ideal Anda berdasarkan target pendapatan dan biaya operasional. Jangan asal menentukan harga.
+        </p>
     </header>
 
     <main>
-        <div class="subtitle" style="text-align:center; margin-bottom:30px; color:var(--text-muted);">
-            Kalkulator profesional untuk menghitung nilai waktu Anda. Data diproses 100% di browser Anda (Privasi Terjaga).
-        </div>
-
-        <div class="calculator-wrapper" id="pdf-area">
-            <!-- Input Form -->
-            <div class="form-section">
-                
+        <div class="calculator-wrapper" id="pdf-container">
+            <!-- INPUTS -->
+            <div class="form-area">
                 <div class="input-group">
-                    <label>Target Pendapatan Tahunan</label>
-                    <div class="input-wrapper">
-                        <span class="currency-symbol js-curr-sym">Rp</span>
+                    <label data-i18n="label_income">Target Pendapatan Tahunan (Bersih)</label>
+                    <div class="input-box">
+                        <span class="curr-sym">Rp</span>
                         <input type="number" id="income" value="120000000">
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Biaya Operasional / Tahun</label>
-                    <div class="input-wrapper">
-                        <span class="currency-symbol js-curr-sym">Rp</span>
+                    <label data-i18n="label_expenses">Biaya Operasional Tahunan</label>
+                    <div class="input-box">
+                        <span class="curr-sym">Rp</span>
                         <input type="number" id="expenses" value="15000000">
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Jam Kerja Efektif (Mingguan)</label>
-                    <input type="range" id="billable-hours-slider" min="5" max="60" value="25">
-                    <div class="stat-row" style="margin-top:5px;">
-                        <span>Non-admin time</span>
-                        <span id="billable-hours-display" class="stat-value" style="color:var(--primary)">25 Jam</span>
-                    </div>
+                    <label><span data-i18n="label_hours">Jam Kerja Efektif (Mingguan)</span>: <strong id="hours-val" style="color:var(--primary)">25</strong></label>
+                    <input type="range" id="hours-slider" min="5" max="60" value="25">
+                    <p data-i18n="desc_hours" style="font-size:0.75rem; color:var(--text-body); margin-top:5px;">Hanya jam yang dibayar (bukan admin/marketing).</p>
                 </div>
 
                 <div class="input-group">
-                    <label>Cuti & Libur (Per Tahun)</label>
-                    <input type="range" id="weeks-off-slider" min="0" max="12" value="4">
-                    <div class="stat-row" style="margin-top:5px;">
-                        <span>Sakit/Liburan</span>
-                        <span id="weeks-off-display" class="stat-value" style="color:var(--primary)">4 Minggu</span>
+                    <label><span data-i18n="label_weeks">Cuti / Libur (Per Tahun)</span>: <strong id="weeks-val" style="color:var(--primary)">4</strong></label>
+                    <input type="range" id="weeks-slider" min="0" max="12" value="4">
+                    <p data-i18n="desc_weeks" style="font-size:0.75rem; color:var(--text-body); margin-top:5px;">Liburan, hari raya, atau sakit.</p>
+                </div>
+            </div>
+
+            <!-- RESULTS -->
+            <div class="result-area">
+                <div class="res-title" data-i18n="res_rate_title">Tarif Minimum Anda</div>
+                <div class="res-value" id="res-rate">0</div>
+                <div class="res-desc" data-i18n="res_rate_desc">per jam untuk mencapai target.</div>
+
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div data-i18n="res_gross">Target Kotor</div>
+                        <div id="res-gross">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div data-i18n="res_hours">Total Jam Billable</div>
+                        <div id="res-total-hours">0</div>
                     </div>
                 </div>
 
-            </div>
-
-            <!-- Result Panel -->
-            <div class="result-section">
-                <span class="result-label">Minimum Rate Anda</span>
-                <div class="result-value" id="hourly-rate">0</div>
-                <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:10px;">per jam</div>
-                
-                <div class="result-divider"></div>
-
-                <div class="stat-row">
-                    <span class="stat-label">Pendapatan Kotor</span>
-                    <span class="stat-value" id="gross-income">0</span>
-                </div>
-                <div class="stat-row">
-                    <span class="stat-label">Total Jam Kerja</span>
-                    <span class="stat-value" id="total-hours">0 Jam</span>
-                </div>
-
-                <!-- Export PDF Button -->
-                <button id="btn-export" class="btn-pdf" onclick="generatePDF()">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 10H18L12 16L6 10H11V3H13V10ZM4 19H20V12H22V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V12H4V19Z" fill="white"></path></svg>
-                    Download PDF
+                <button class="btn-pdf" onclick="generatePDF()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10H18L12 16L6 10H11V3H13V10ZM4 19H20V12H22V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V12H4V19Z"></path></svg>
+                    <span data-i18n="btn_pdf">Download Laporan PDF</span>
                 </button>
             </div>
         </div>
 
-        <article class="content-section">
-            <h2>Tentang Kalkulator Ini</h2>
-            <p>Fitur baru <strong>Multi-Currency</strong> memungkinkan Anda menyesuaikan simbol mata uang (IDR, USD, EUR) tanpa me-reset angka, memudahkan freelancer yang bekerja dengan klien internasional.</p>
-            <p>Gunakan tombol <strong>Mode Gelap</strong> di pojok kanan atas untuk kenyamanan mata saat menghitung di malam hari. Hasil perhitungan kini bisa disimpan dengan menekan tombol <strong>Download PDF</strong> untuk arsip pribadi atau lampiran proposal.</p>
+        <!-- PILLAR CONTENT (SEO TEXT) -->
+        <article class="content-area">
+            <h2 data-i18n="art_h1">Mengapa Menghitung Tarif Itu Penting?</h2>
+            <p data-i18n="art_p1">Banyak freelancer pemula menentukan harga hanya berdasarkan perasaan atau meniru teman. Ini berbahaya. Kalkulator ini menggunakan metode "Cost-Plus Pricing" untuk memastikan bisnis Anda berkelanjutan.</p>
+            
+            <h2 data-i18n="art_h2">Jebakan "Jam Kerja" Freelancer</h2>
+            <p data-i18n="art_p2">Ingat, Anda tidak bisa menagih klien untuk 40 jam kerja per minggu. Rata-rata freelancer hanya memiliki 20-25 jam efektif (billable hours). Sisanya habis untuk mencari klien, membalas email, dan administrasi. Alat ini otomatis memperhitungkan faktor tersebut.</p>
+
+            <h3 data-i18n="art_h3">Rumus Perhitungan</h3>
+            <blockquote style="border-left: 4px solid var(--primary); padding-left: 15px; font-style: italic; background: rgba(0,0,0,0.02); padding: 10px;">
+                (Gaji + Biaya) ÷ (Jam Mingguan × (52 - Minggu Libur))
+            </blockquote>
         </article>
     </main>
 
     <footer>
-        &copy; 2026 RateKu Open Source Project.
+        &copy; 2024 RateKu Open Source Project. <span data-i18n="footer">Dibuat untuk komunitas freelancer.</span>
     </footer>
 </div>
 
 <script>
-    // --- VARIABLES ---
-    const incomeInput = document.getElementById('income');
-    const expensesInput = document.getElementById('expenses');
-    const hoursSlider = document.getElementById('billable-hours-slider');
-    const weeksSlider = document.getElementById('weeks-off-slider');
-    
-    // UI Elements
-    const symbolSpans = document.querySelectorAll('.js-curr-sym');
-    const currencySelect = document.getElementById('currency-select');
-    const themeToggle = document.getElementById('theme-toggle');
-    const htmlEl = document.documentElement;
-    const iconSun = document.getElementById('icon-sun');
-    const iconMoon = document.getElementById('icon-moon');
-
-    // State for Currency
-    let currentLocale = 'id-ID';
-    let currentCurrency = 'IDR';
-
-    // --- LOGIC: CURRENCY ---
-    function updateCurrencyConfig() {
-        const val = currencySelect.value;
-        if (val === 'IDR') {
-            currentLocale = 'id-ID';
-            currentCurrency = 'IDR';
-            symbolSpans.forEach(el => el.textContent = 'Rp');
-        } else if (val === 'USD') {
-            currentLocale = 'en-US';
-            currentCurrency = 'USD';
-            symbolSpans.forEach(el => el.textContent = '$');
-        } else if (val === 'EUR') {
-            currentLocale = 'de-DE';
-            currentCurrency = 'EUR';
-            symbolSpans.forEach(el => el.textContent = '€');
+    // --- DICTIONARY (TRANSLATIONS) ---
+    const translations = {
+        id: {
+            main_title: "Kalkulator Tarif Freelance",
+            main_desc: "Hitung tarif per jam ideal Anda berdasarkan target pendapatan dan biaya operasional. Jangan asal menentukan harga.",
+            label_income: "Target Pendapatan Tahunan (Bersih)",
+            label_expenses: "Biaya Operasional Tahunan",
+            label_hours: "Jam Kerja Efektif (Mingguan)",
+            desc_hours: "Hanya jam yang dibayar (bukan admin/marketing).",
+            label_weeks: "Cuti / Libur (Per Tahun)",
+            desc_weeks: "Liburan, hari raya, atau sakit.",
+            res_rate_title: "Tarif Minimum Anda",
+            res_rate_desc: "per jam untuk mencapai target.",
+            res_gross: "Target Kotor (Gross)",
+            res_hours: "Total Jam Billable",
+            btn_pdf: "Download Laporan PDF",
+            art_h1: "Mengapa Menghitung Tarif Itu Penting?",
+            art_p1: "Banyak freelancer pemula menentukan harga hanya berdasarkan perasaan atau meniru teman. Ini berbahaya. Kalkulator ini menggunakan metode \"Cost-Plus Pricing\" untuk memastikan bisnis Anda berkelanjutan.",
+            art_h2: "Jebakan \"Jam Kerja\" Freelancer",
+            art_p2: "Ingat, Anda tidak bisa menagih klien untuk 40 jam kerja per minggu. Rata-rata freelancer hanya memiliki 20-25 jam efektif (billable hours). Sisanya habis untuk mencari klien, membalas email, dan administrasi. Alat ini otomatis memperhitungkan faktor tersebut.",
+            art_h3: "Rumus Perhitungan",
+            footer: "Dibuat untuk komunitas freelancer.",
+            unit_week: "Minggu",
+            unit_hour: "Jam"
+        },
+        en: {
+            main_title: "Freelance Rate Calculator",
+            main_desc: "Calculate your ideal hourly rate based on income goals and expenses. Stop guessing, start charging your worth.",
+            label_income: "Target Annual Income (Net)",
+            label_expenses: "Annual Business Expenses",
+            label_hours: "Billable Hours (Weekly)",
+            desc_hours: "Only hours you charge for (excludes admin/marketing).",
+            label_weeks: "Weeks Off (Per Year)",
+            desc_weeks: "Vacation, sick days, or holidays.",
+            res_rate_title: "Your Minimum Rate",
+            res_rate_desc: "per hour to reach your goal.",
+            res_gross: "Gross Target",
+            res_hours: "Total Billable Hours",
+            btn_pdf: "Download PDF Report",
+            art_h1: "Why Calculation Matters?",
+            art_p1: "Many beginners set prices based on guesswork. This tool uses the 'Cost-Plus Pricing' method to ensure your freelance business is sustainable and profitable.",
+            art_h2: "The 'Billable Hours' Trap",
+            art_p2: "Remember, you cannot bill clients for 40 hours a week. Average freelancers only have 20-25 billable hours. The rest goes to marketing, emails, and admin. This tool adjusts for that reality.",
+            art_h3: "The Formula",
+            footer: "Built for the freelance community.",
+            unit_week: "Weeks",
+            unit_hour: "Hours"
         }
-        calculateRate(); // Recalculate with new formatting
+    };
+
+    // --- STATE VARIABLES ---
+    let currentLang = 'id'; // Default Language
+    let currentCurrency = 'IDR';
+    let currentLocale = 'id-ID';
+
+    // --- ELEMENTS ---
+    const els = {
+        income: document.getElementById('income'),
+        expenses: document.getElementById('expenses'),
+        hSlider: document.getElementById('hours-slider'),
+        wSlider: document.getElementById('weeks-slider'),
+        hVal: document.getElementById('hours-val'),
+        wVal: document.getElementById('weeks-val'),
+        resRate: document.getElementById('res-rate'),
+        resGross: document.getElementById('res-gross'),
+        resTotalH: document.getElementById('res-total-hours'),
+        currSym: document.querySelectorAll('.curr-sym')
+    };
+
+    // --- LOGIC: LANGUAGE ---
+    function setLang(lang) {
+        currentLang = lang;
+        
+        // Update Buttons
+        document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+        // Update Text Content
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key]) {
+                el.innerText = translations[lang][key];
+            }
+        });
+
+        // Update Document Title
+        document.title = lang === 'id' ? "Kalkulator Tarif Freelance" : "Freelance Rate Calculator";
+
+        // Save Preference
+        localStorage.setItem('lang', lang);
+        
+        // Recalculate to update units (Jam vs Hours)
+        calculate();
     }
 
-    const formatMoney = (num) => {
-        return new Intl.NumberFormat(currentLocale, { 
+    // --- LOGIC: CALCULATOR ---
+    function formatMoney(num) {
+        // Jika Bahasa Indonesia dipilih, pakai format Indonesia (titik sebagai ribuan)
+        // Jika Bahasa Inggris, pakai format US (koma sebagai ribuan)
+        const localeForNum = currentLang === 'id' ? 'id-ID' : 'en-US';
+        
+        return new Intl.NumberFormat(localeForNum, { 
             style: 'currency', 
             currency: currentCurrency,
             maximumFractionDigits: 0 
         }).format(num);
-    };
+    }
 
-    // --- LOGIC: CALCULATOR ---
-    function calculateRate() {
-        // Slider Displays
-        document.getElementById('billable-hours-display').textContent = `${hoursSlider.value} Jam`;
-        document.getElementById('weeks-off-display').textContent = `${weeksSlider.value} Minggu`;
+    function calculate() {
+        const income = parseFloat(els.income.value) || 0;
+        const expenses = parseFloat(els.expenses.value) || 0;
+        const hours = parseFloat(els.hSlider.value);
+        const weeks = parseFloat(els.wSlider.value);
 
-        const income = parseFloat(incomeInput.value) || 0;
-        const expenses = parseFloat(expensesInput.value) || 0;
-        const weeklyHours = parseFloat(hoursSlider.value);
-        const weeksOff = parseFloat(weeksSlider.value);
+        // Update Slider Labels with correct Language Unit
+        const unitH = translations[currentLang].unit_hour;
+        const unitW = translations[currentLang].unit_week;
+        els.hVal.textContent = `${hours} ${unitH}`;
+        els.wVal.textContent = `${weeks} ${unitW}`;
 
-        const totalWeeks = 52 - weeksOff;
-        const totalHours = weeklyHours * totalWeeks;
+        const totalWeeks = 52 - weeks;
+        const totalHours = hours * totalWeeks;
         const targetGross = income + expenses;
 
         let rate = 0;
         if (totalHours > 0) rate = targetGross / totalHours;
 
-        document.getElementById('hourly-rate').textContent = formatMoney(rate);
-        document.getElementById('gross-income').textContent = formatMoney(targetGross);
-        document.getElementById('total-hours').textContent = `${totalHours.toLocaleString(currentLocale)} Jam`;
-    }
-
-    // --- LOGIC: THEME (DARK MODE) ---
-    function toggleTheme() {
-        const isDark = htmlEl.classList.toggle('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        updateIcons(isDark);
-    }
-
-    function updateIcons(isDark) {
-        if(isDark) {
-            iconMoon.style.display = 'none';
-            iconSun.style.display = 'block';
-        } else {
-            iconMoon.style.display = 'block';
-            iconSun.style.display = 'none';
-        }
-    }
-
-    // Initialize Theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        htmlEl.classList.add('dark');
-        updateIcons(true);
-    } else {
-        updateIcons(false);
-    }
-
-    // --- LOGIC: PDF EXPORT ---
-    function generatePDF() {
-        const element = document.getElementById('pdf-area');
-        const btn = document.getElementById('btn-export');
+        els.resRate.textContent = formatMoney(rate);
+        els.resGross.textContent = formatMoney(targetGross);
         
-        // Hide button temporarily
-        btn.style.display = 'none';
-
-        const opt = {
-            margin:       10,
-            filename:     'my-freelance-rate.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, logging: false },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        // Check if library loaded
-        if (typeof html2pdf !== 'undefined') {
-            html2pdf().set(opt).from(element).save().then(() => {
-                btn.style.display = 'flex'; // Restore button
-            });
-        } else {
-            alert('Fitur PDF sedang dimuat. Silakan coba 2 detik lagi.');
-            btn.style.display = 'flex';
-        }
+        // Format Total Hours Number
+        const localeNum = currentLang === 'id' ? 'id-ID' : 'en-US';
+        els.resTotalH.textContent = `${totalHours.toLocaleString(localeNum)} ${unitH}`;
     }
 
-    // --- EVENT LISTENERS ---
-    [incomeInput, expensesInput, hoursSlider, weeksSlider].forEach(el => {
-        el.addEventListener('input', calculateRate);
+    // --- EVENTS ---
+    [els.income, els.expenses, els.hSlider, els.wSlider].forEach(el => el.addEventListener('input', calculate));
+    
+    document.getElementById('currency-select').addEventListener('change', (e) => {
+        currentCurrency = e.target.value;
+        const sym = currentCurrency === 'IDR' ? 'Rp' : (currentCurrency === 'EUR' ? '€' : '$');
+        els.currSym.forEach(s => s.textContent = sym);
+        calculate();
     });
-    currencySelect.addEventListener('change', updateCurrencyConfig);
-    themeToggle.addEventListener('click', toggleTheme);
 
-    // Initial Run
-    calculateRate();
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // PDF Export
+    function generatePDF() {
+        const element = document.getElementById('pdf-container');
+        const btn = document.querySelector('.btn-pdf');
+        
+        btn.style.display = 'none'; // Hide button
+        const opt = {
+            margin: 10,
+            filename: `freelance-rate-${currentLang}.pdf`, // Dynamic filename
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        };
+        
+        html2pdf().set(opt).from(element).save().then(() => btn.style.display = 'flex');
+    }
+
+    // --- INITIALIZATION ---
+    // 1. Check Theme
+    if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    
+    // 2. Check Lang (Default to ID if none)
+    const savedLang = localStorage.getItem('lang') || 'id';
+    setLang(savedLang);
+
+    // 3. Init Calc
+    calculate();
 
 </script>
 
 </body>
 </html>
-
